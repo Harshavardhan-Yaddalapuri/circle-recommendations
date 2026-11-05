@@ -11,7 +11,11 @@ before(async () => {
   base = `http://127.0.0.1:${server.address().port}`;
 });
 
-after(() => server.close());
+// fetch keeps connections alive; drop them so close() can't wait on an open socket.
+after(() => {
+  server.closeAllConnections();
+  server.close();
+});
 
 test("GET /users/7/recommendations returns a ranked list with reasons", async () => {
   const res = await fetch(`${base}/users/7/recommendations?limit=3`);
