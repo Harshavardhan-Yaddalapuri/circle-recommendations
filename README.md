@@ -4,7 +4,7 @@ Recommends Lean In Circles for a member to join: a ranked list, each with a shor
 
 ## Setup
 
-Requires **Node.js 22.5+** (uses Node's built-in SQLite, so there's nothing native to compile).
+Requires **Node.js 22.13+** (uses Node's built-in SQLite, so there's nothing native to compile).
 
 ```bash
 npm install
@@ -16,7 +16,7 @@ The database is built in memory from `data/*.json` each time the server starts.
 
 ## ⚠️ "Now" is pinned to the dataset date: 2026-09-21
 
-The seed data is a snapshot generated on **2026-09-21** (see `ANCHOR` in `generate.mjs`); its newest activity is 2026-09-20. The recommender filters out Circles with no activity in the last 30 days, so **if it used your computer's clock, every Circle would look inactive and every member would get an empty list.** A test (`with the real clock, every Circle is stale…`) proves exactly that.
+The seed data is a snapshot generated on **2026-09-21** (see `ANCHOR` in `generate.mjs`); its activity runs right up to that date. The recommender filters out Circles with no activity in the last 30 days, so **if it used your computer's clock, every Circle would look inactive and every member would get an empty list.** A test (`with the real clock, every Circle is stale…`) proves exactly that.
 
 So all "is this Circle active?" checks and "last 30 days" windows measure from `2026-09-21T00:00:00Z`, not today. To use a different date:
 

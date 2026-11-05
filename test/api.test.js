@@ -6,7 +6,8 @@ let server;
 let base;
 
 before(async () => {
-  server = createApp().listen(0);
+  // Loopback only: binding all interfaces can trigger the macOS firewall check and stall.
+  server = createApp().listen(0, "127.0.0.1");
   await new Promise((resolve) => server.once("listening", resolve));
   base = `http://127.0.0.1:${server.address().port}`;
 });
@@ -32,13 +33,15 @@ test("unknown user returns 404", async () => {
   assert.equal(res.status, 404);
 });
 
-test("non-numeric user id returns 400", async () => {
-  const res = await fetch(`${base}/users/abc/recommendations`);
-  assert.equal(res.status, 400);
+test("user id that isn't a plain positive integer returns 400", async () => {
+  for (const id of ["abc", "0", "7.0", "0x7"]) {
+    const res = await fetch(`${base}/users/${id}/recommendations`);
+    assert.equal(res.status, 400, `id=${id}`);
+  }
 });
 
 test("out-of-range limit returns 400", async () => {
-  for (const limit of ["0", "21", "two"]) {
+  for (const limit of ["0", "21", "two", "1e1", "2.0"]) {
     const res = await fetch(`${base}/users/7/recommendations?limit=${limit}`);
     assert.equal(res.status, 400, `limit=${limit}`);
   }
