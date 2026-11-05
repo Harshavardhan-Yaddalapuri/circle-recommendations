@@ -33,7 +33,7 @@ test("cold start: user 42 still gets a full list, explained as a starting point"
 test("no stated interests but has memberships: interests are inferred from joined Circles", () => {
   const user = db.prepare(
     `SELECT u.id FROM users u WHERE u.id != 42
-       AND NOT EXISTS (SELECT 1 FROM user_topic_interests i WHERE i.user_id = u.id) LIMIT 1`,
+       AND NOT EXISTS (SELECT 1 FROM user_topic_interests i WHERE i.user_id = u.id) ORDER BY u.id LIMIT 1`,
   ).get();
   const result = recommend(db, user.id);
   assert.equal(result.basis, "inferred");
@@ -68,6 +68,7 @@ test("reason mentions activity, format and how to join", () => {
 
 test("reason warns when only a few spots are left", () => {
   const visibilityLab = recommend(db, 7).recommendations.find((r) => r.circle_id === 34); // #34: 7/10
+  assert.ok(visibilityLab, "#34 Visibility Lab should be recommended to user 7");
   assert.match(visibilityLab.reason, /only 3 spots left/);
 });
 
@@ -76,8 +77,13 @@ test("unknown user returns null", () => {
 });
 
 test("with the real clock, every Circle is stale, so nothing is recommended (why DATA_NOW is pinned)", () => {
-  const now = new Date().toISOString(); // dataset ends 2026-09-20; any later "now" is > 30 days past it
+  const now = new Date().toISOString(); // dataset ends 2026-09-20; once the real clock is 30+ days past that, every Circle is stale
   for (const { id } of db.prepare("SELECT id FROM users").all()) {
     assert.deepEqual(recommend(db, id, { now }).recommendations, [], `user ${id}`);
   }
+});
+
+test("limit 0 or below returns no recommendations", () => {
+  assert.deepEqual(recommend(db, 7, { limit: 0 }).recommendations, []);
+  assert.deepEqual(recommend(db, 7, { limit: -1 }).recommendations, []);
 });

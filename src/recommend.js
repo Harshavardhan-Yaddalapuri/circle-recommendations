@@ -1,6 +1,7 @@
 // The seed data is a snapshot taken at 2026-09-21. Scoring against the real clock
 // would make every Circle look stale, so "now" is pinned. Override with REC_NOW.
 export const DATA_NOW = process.env.REC_NOW ?? "2026-09-21T00:00:00Z";
+if (Number.isNaN(Date.parse(DATA_NOW))) throw new Error(`REC_NOW is not a valid date: ${DATA_NOW}`);
 
 const DAY_MS = 86_400_000;
 const ACTIVE_WINDOW_DAYS = 30;
@@ -42,7 +43,7 @@ export function recommend(db, userId, { limit = 5, now = DATA_NOW } = {}) {
     .sort((a, b) => b.score - a.score || a.circle.id - b.circle.id);
 
   return {
-    user_id: userId,
+    user_id: user.id,
     basis,
     recommendations: diversify(scored, limit).map(({ circle, match, score }) => ({
       circle_id: circle.id,
@@ -119,11 +120,11 @@ function diversify(scored, limit) {
   const seen = new Set();
   const out = [];
   for (const item of scored) {
+    if (out.length >= limit) break;
     const key = item.circle.topic_slug ?? `circle:${item.circle.id}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(item);
-    if (out.length === limit) break;
   }
   return out;
 }
