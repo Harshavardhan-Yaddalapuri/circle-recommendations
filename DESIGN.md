@@ -36,6 +36,3 @@ Profile completeness, photo, bio, job title and industry have nothing on the Cir
 
 ## With more time
 Learn weights from outcomes; give related topics partial credit (Confidence ↔ Imposter syndrome); use leader and member profiles (industry, seniority) for "people like you" signals; handle Circles with no topic (#27, #28) via tags or descriptions; an optional LLM pass to polish reasons, checked against the structured signals.
-
-## How I used AI
-I used Claude Code throughout. It summarized the brief and data, then profiled the dataset, which surfaced the pinned-date problem, unlisted Circles and one duplicated tag. It prototyped the scorer against the four planted users *before* any code was written. That prototype exposed that #1 and #5 are equally strong leadership Circles; I chose the "attendable format" signal to separate them because Circles have no location. Tests were written first and run against every user in the dataset, not just the planted ones. I reviewed and own every decision above.

@@ -7,6 +7,8 @@ Recommends Lean In Circles for a member to join: a ranked list, each with a shor
 Requires **Node.js 22.13+** (uses Node's built-in SQLite, so there's nothing native to compile).
 
 ```bash
+git clone https://github.com/Harshavardhan-Yaddalapuri/circle-recommendations.git
+cd circle-recommendations
 npm install
 npm start        # http://localhost:3000
 npm test         # 16 tests, including the four planted scenarios
