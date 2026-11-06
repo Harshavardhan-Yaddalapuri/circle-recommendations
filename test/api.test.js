@@ -6,7 +6,7 @@ let server;
 let base;
 
 before(async () => {
-  // Loopback only: binding all interfaces can trigger the macOS firewall check and stall.
+  // Loopback only: the test server never needs to be reachable from the network.
   server = createApp().listen(0, "127.0.0.1");
   await new Promise((resolve) => server.once("listening", resolve));
   base = `http://127.0.0.1:${server.address().port}`;
